@@ -34,6 +34,7 @@
             border-radius: 8px;
             width: calc(16.66% - 20px);
             box-sizing: border-box;
+            position: relative;
         }
         .barcode-item img {
             width: 100%;
@@ -42,6 +43,21 @@
         .barcode-item div {
             font-size: 7px;
             margin-top: 5px;
+        }
+        .delete-btn {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background: red;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            font-size: 12px;
+            line-height: 20px;
+            text-align: center;
         }
         button {
             background-color: #007bff;
@@ -64,6 +80,9 @@
                 break-inside: avoid;
                 width: calc(16.66% - 10px);
                 margin: 5px;
+            }
+            .delete-btn {
+                display: none;
             }
         }
     </style>
@@ -233,11 +252,17 @@
         const barcodeItem = document.createElement('div');
         barcodeItem.className = 'barcode-item';
         barcodeItem.innerHTML = `
+            <button class="delete-btn" onclick="deleteBarcode(this)">X</button>
             <img src="${barcodeUrl}" alt="Barcode">
             <div>${label}</div>
         `;
 
         document.getElementById('barcode-grid').appendChild(barcodeItem);
+    }
+
+    function deleteBarcode(button) {
+        const barcodeItem = button.parentElement;
+        barcodeItem.remove();
     }
 
     // Initialize color options on page load
