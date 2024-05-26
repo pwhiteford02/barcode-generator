@@ -125,6 +125,10 @@
             <option value="1TB">1TB</option>
         </select>
     </div>
+    <div class="form-group">
+        <label for="include-date">Include Date:</label>
+        <input type="checkbox" id="include-date" checked>
+    </div>
     <button id="add-barcode-btn">Add Barcode</button>
 </div>
 
@@ -211,6 +215,7 @@
         const model = document.getElementById('model').value;
         const color = document.getElementById('color').value;
         const storage = document.getElementById('storage').value;
+        const includeDate = document.getElementById('include-date').checked;
         const storageGroup = document.getElementById('storage-group');
 
         if (imei.length !== 15 || isNaN(imei)) {
@@ -220,8 +225,8 @@
 
         const date = new Date().toLocaleDateString();
         const label = watchModels.includes(model)
-            ? `${model} - ${color} - ${date}`
-            : `${model} - ${color} - ${storage} - ${date}`;
+            ? includeDate ? `${model} - ${color} - ${date}` : `${model} - ${color}`
+            : includeDate ? `${model} - ${color} - ${storage} - ${date}` : `${model} - ${color} - ${storage}`;
 
         const barcodeUrl = `https://barcode.tec-it.com/barcode.ashx?data=${imei}&code=Code128&dpi=96`;
 
