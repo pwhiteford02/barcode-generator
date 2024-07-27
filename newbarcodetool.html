@@ -277,7 +277,7 @@
             }
         }
 
-        const barcodeUrl = `https://barcode.tec-it.com/barcode.ashx?data=${imei}&code=Code128&dpi=96`;
+        const barcodeUrl = `https://barcode.tec-it.com/barcode.ashx?data=${imei}&code=Code128&dpi=96&filetype=gif`;
 
         const barcodeItem = document.createElement('div');
         barcodeItem.className = 'barcode-item';
@@ -300,7 +300,9 @@
         const link = document.createElement('a');
         link.href = url;
         link.download = `${imei}.gif`;
+        document.body.appendChild(link);
         link.click();
+        document.body.removeChild(link);
     }
 
     // Initialize color options on page load
