@@ -43,10 +43,10 @@
             font-size: 7px;
             margin-top: 2px;
         }
-        .delete-btn {
+        .delete-btn, .download-btn {
             position: absolute;
             top: 5px;
-            right: 5px;
+            right: 30px;
             background: red;
             color: white;
             border: none;
@@ -57,6 +57,10 @@
             font-size: 12px;
             line-height: 20px;
             text-align: center;
+        }
+        .download-btn {
+            right: 5px;
+            background: green;
         }
         button {
             background-color: #007bff;
@@ -80,7 +84,7 @@
                 width: calc(16.66% - 10px);
                 margin: 5px;
             }
-            .delete-btn {
+            .delete-btn, .download-btn {
                 display: none;
             }
         }
@@ -279,6 +283,7 @@ function addBarcode() {
     barcodeItem.className = 'barcode-item';
     barcodeItem.innerHTML = `
         <button class="delete-btn" onclick="deleteBarcode(this)">X</button>
+        <button class="download-btn" onclick="downloadBarcode('${barcodeUrl}', '${imei}')">↓</button>
         <img src="${barcodeUrl}" alt="Barcode">
         <div>${label}</div>
     `;
@@ -289,6 +294,18 @@ function addBarcode() {
     function deleteBarcode(button) {
         const barcodeItem = button.parentElement;
         barcodeItem.remove();
+    }
+
+    function downloadBarcode(url, imei) {
+        fetch(url)
+            .then(response => response.blob())
+            .then(blob => {
+                const link = document.createElement('a');
+                link.href = window.URL.createObjectURL(blob);
+                link.download = `${imei}.svg`;
+                link.click();
+            })
+            .catch(console.error);
     }
 
     // Initialize color options on page load
