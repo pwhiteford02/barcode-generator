@@ -297,15 +297,10 @@
     }
 
     function downloadBarcode(url, imei) {
-        fetch(url)
-            .then(response => response.blob())
-            .then(blob => {
-                const link = document.createElement('a');
-                link.href = window.URL.createObjectURL(blob);
-                link.download = `${imei}.gif`;
-                link.click();
-            })
-            .catch(console.error);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `${imei}.gif`;
+        link.click();
     }
 
     // Initialize color options on page load
