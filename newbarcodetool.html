@@ -7,62 +7,44 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            margin: 20px;
-            background-color: #f5f5f5;
-            color: #333;
+            margin: 0;
+            padding: 0;
+            background-color: #e9ecef;
+            color: #343a40;
         }
-        .form-group {
-            margin-bottom: 15px;
+        .container {
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
         }
         #controls {
-            background: #fff;
+            background: #ffffff;
             padding: 20px;
             border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             margin-bottom: 20px;
         }
-        #barcode-grid {
+        .form-group {
             display: flex;
-            flex-wrap: wrap;
+            flex-direction: column;
+            margin-bottom: 15px;
         }
-        .barcode-item {
-            padding: 5px;
-            margin: 5px;
-            text-align: center;
-            background: #fff;
-            border-radius: 8px;
-            width: calc(16.66% - 20px);
-            box-sizing: border-box;
-            position: relative;
+        .form-group label {
+            margin-bottom: 5px;
+            font-weight: bold;
         }
-        .barcode-item img {
-            width: 100%;
-            height: auto;
+        .form-group input,
+        .form-group select {
+            padding: 10px;
+            border: 1px solid #ced4da;
+            border-radius: 4px;
+            font-size: 16px;
+            color: #495057;
         }
-        .barcode-item div {
-            font-size: 7px;
-            margin-top: 2px;
+        .form-group input[type="checkbox"] {
+            width: auto;
         }
-        .delete-btn, .download-btn {
-            position: absolute;
-            top: 5px;
-            right: 30px;
-            background: red;
-            color: white;
-            border: none;
-            border-radius: 50%;
-            width: 20px;
-            height: 20px;
-            cursor: pointer;
-            font-size: 12px;
-            line-height: 20px;
-            text-align: center;
-        }
-        .download-btn {
-            right: 5px;
-            background: green;
-        }
-        button {
+        .btn {
             background-color: #007bff;
             color: white;
             border: none;
@@ -71,101 +53,235 @@
             cursor: pointer;
             font-size: 16px;
         }
-        button:hover {
+        .btn:hover {
             background-color: #0056b3;
         }
+        #barcode-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
+        }
+        .barcode-item {
+            background: #ffffff;
+            padding: 10px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            position: relative;
+        }
+        .barcode-item img {
+            width: 100%;
+            height: auto;
+        }
+        .barcode-item div {
+            font-size: 12px;
+            margin-top: 10px;
+        }
+        .delete-btn,
+        .download-btn {
+            position: absolute;
+            top: 10px;
+            border: none;
+            border-radius: 50%;
+            width: 25px;
+            height: 25px;
+            cursor: pointer;
+            font-size: 14px;
+            line-height: 25px;
+            text-align: center;
+            color: white;
+        }
+        .delete-btn {
+            right: 40px;
+            background: #dc3545;
+        }
+        .download-btn {
+            right: 10px;
+            background: #28a745;
+        }
+        #color-menu-btn {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 30px;
+            height: 30px;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            display: none;
+        }
+        #color-menu {
+            display: none;
+            background: #fff;
+            position: fixed;
+            top: 50px;
+            left: 50px;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+        }
+        .color-slider {
+            margin: 10px 0;
+        }
+        .color-slider label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        .color-slider input {
+            width: 100%;
+        }
+        @media (max-width: 768px) {
+            .form-group {
+                flex-direction: column;
+            }
+            .barcode-item {
+                grid-column: span 2;
+            }
+        }
+        @media (max-width: 480px) {
+            .barcode-item {
+                grid-column: span 1;
+            }
+        }
         @media print {
-            #controls, #add-barcode-btn {
+            #controls, #add-barcode-btn, #color-menu-btn {
                 display: none;
             }
             .barcode-item {
                 page-break-inside: avoid;
                 break-inside: avoid;
-                width: calc(16.66% - 10px);
-                margin: 5px;
+                margin-bottom: 10px;
             }
             .delete-btn, .download-btn {
                 display: none;
             }
         }
+        #hover-area {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 50px;
+            height: 50px;
+            background: transparent;
+        }
+        #hover-area:hover #color-menu-btn {
+            display: block;
+        }
+        @keyframes disco {
+            0% { background-color: #ff0000; }
+            20% { background-color: #ff7f00; }
+            40% { background-color: #ffff00; }
+            60% { background-color: #00ff00; }
+            80% { background-color: #0000ff; }
+            100% { background-color: #8b00ff; }
+        }
+        .disco {
+            animation: disco 0.5s infinite;
+        }
     </style>
 </head>
 <body>
 
-<div id="controls">
-    <div class="form-group">
-        <label for="imei">IMEI Number:</label>
-        <input type="text" id="imei">
+<div class="container">
+    <div id="hover-area">
+        <button id="color-menu-btn"></button>
     </div>
-    <div class="form-group">
-        <label for="model">Model:</label>
-        <select id="model">
-            <!-- Most Popular Models -->
-            <option value="iPhone 14 Pro Max">iPhone 14 Pro Max</option>
-            <option value="iPhone 14 Pro">iPhone 14 Pro</option>
-            <option value="iPhone 14">iPhone 14</option>
-            <option value="iPhone 13">iPhone 13</option>
-            <option value="iPhone 13 Pro">iPhone 13 Pro</option>
-            <!-- Other Models -->
-            <option value="iPhone 13 Mini">iPhone 13 Mini</option>
-            <option value="iPhone 13 Pro Max">iPhone 13 Pro Max</option>
-            <option value="iPhone 14 Plus">iPhone 14 Plus</option>
-            <option value="iPhone 15">iPhone 15</option>
-            <option value="iPhone 15 Plus">iPhone 15 Plus</option>
-            <option value="iPhone 15 Pro">iPhone 15 Pro</option>
-            <option value="iPhone 15 Pro Max">iPhone 15 Pro Max</option>
-            <option value="iPad Air (5th generation)">iPad Air (5th generation)</option>
-            <option value="iPad (10th generation)">iPad (10th generation)</option>
-            <option value="iPad Mini (6th generation)">iPad Mini (6th generation)</option>
-            <option value="iPad Pro 11-inch (3rd generation)">iPad Pro 11-inch (3rd generation)</option>
-            <option value="iPad Pro 12.9-inch (5th generation)">iPad Pro 12.9-inch (5th generation)</option>
-            <option value="Apple Watch Series 7 41mm">Apple Watch Series 7 41mm</option>
-            <option value="Apple Watch Series 7 45mm">Apple Watch Series 7 45mm</option>
-            <option value="Apple Watch Series 8 41mm">Apple Watch Series 8 41mm</option>
-            <option value="Apple Watch Series 8 45mm">Apple Watch Series 8 45mm</option>
-            <option value="Apple Watch SE (2nd generation) 40mm">Apple Watch SE (2nd generation) 40mm</option>
-            <option value="Apple Watch SE (2nd generation) 44mm">Apple Watch SE (2nd generation) 44mm</option>
-            <option value="Apple Watch Ultra 49mm">Apple Watch Ultra 49mm</option>
-            <option value="Apple Watch Ultra 2 49mm">Apple Watch Ultra 2 49mm</option>
-            <option value="Apple Watch Series 9 41mm">Apple Watch Series 9 41mm</option>
-            <option value="Apple Watch Series 9 45mm">Apple Watch Series 9 45mm</option>
-            <option value="Custom">Custom</option>
-        </select>
+    <div id="color-menu">
+        <div class="color-slider">
+            <label for="bg-color">Background Color:</label>
+            <input type="color" id="bg-color" value="#e9ecef">
+        </div>
+        <div class="color-slider">
+            <label for="text-color">Text Color:</label>
+            <input type="color" id="text-color" value="#343a40">
+        </div>
+        <div class="color-slider">
+            <label for="btn-color">Button Color:</label>
+            <input type="color" id="btn-color" value="#007bff">
+        </div>
+        <div class="color-slider">
+            <label for="btn-hover-color">Button Hover Color:</label>
+            <input type="color" id="btn-hover-color" value="#0056b3">
+        </div>
+        <button class="btn" id="close-color-menu">Close</button>
     </div>
-    <div class="form-group" id="custom-model-group" style="display: none;">
-        <label for="custom-model">Custom Model:</label>
-        <input type="text" id="custom-model">
+
+    <div id="controls">
+        <div class="form-group">
+            <label for="imei">IMEI Number:</label>
+            <input type="text" id="imei">
+        </div>
+        <div class="form-group">
+            <label for="model">Model:</label>
+            <select id="model">
+                <!-- Most Popular Models -->
+                <option value="iPhone 14 Pro Max">iPhone 14 Pro Max</option>
+                <option value="iPhone 14 Pro">iPhone 14 Pro</option>
+                <option value="iPhone 14">iPhone 14</option>
+                <option value="iPhone 13">iPhone 13</option>
+                <option value="iPhone 13 Pro">iPhone 13 Pro</option>
+                <!-- Other Models -->
+                <option value="iPhone 13 Mini">iPhone 13 Mini</option>
+                <option value="iPhone 13 Pro Max">iPhone 13 Pro Max</option>
+                <option value="iPhone 14 Plus">iPhone 14 Plus</option>
+                <option value="iPhone 15">iPhone 15</option>
+                <option value="iPhone 15 Plus">iPhone 15 Plus</option>
+                <option value="iPhone 15 Pro">iPhone 15 Pro</option>
+                <option value="iPhone 15 Pro Max">iPhone 15 Pro Max</option>
+                <option value="iPad Air (5th generation)">iPad Air (5th generation)</option>
+                <option value="iPad (10th generation)">iPad (10th generation)</option>
+                <option value="iPad Mini (6th generation)">iPad Mini (6th generation)</option>
+                <option value="iPad Pro 11-inch (3rd generation)">iPad Pro 11-inch (3rd generation)</option>
+                <option value="iPad Pro 12.9-inch (5th generation)">iPad Pro 12.9-inch (5th generation)</option>
+                <option value="Apple Watch Series 7 41mm">Apple Watch Series 7 41mm</option>
+                <option value="Apple Watch Series 7 45mm">Apple Watch Series 7 45mm</option>
+                <option value="Apple Watch Series 8 41mm">Apple Watch Series 8 41mm</option>
+                <option value="Apple Watch Series 8 45mm">Apple Watch Series 8 45mm</option>
+                <option value="Apple Watch SE (2nd generation) 40mm">Apple Watch SE (2nd generation) 40mm</option>
+                <option value="Apple Watch SE (2nd generation) 44mm">Apple Watch SE (2nd generation) 44mm</option>
+                <option value="Apple Watch Ultra 49mm">Apple Watch Ultra 49mm</option>
+                <option value="Apple Watch Ultra 2 49mm">Apple Watch Ultra 2 49mm</option>
+                <option value="Apple Watch Series 9 41mm">Apple Watch Series 9 41mm</option>
+                <option value="Apple Watch Series 9 45mm">Apple Watch Series 9 45mm</option>
+                <option value="Custom">Custom</option>
+            </select>
+        </div>
+        <div class="form-group" id="custom-model-group" style="display: none;">
+            <label for="custom-model">Custom Model:</label>
+            <input type="text" id="custom-model">
+        </div>
+        <div class="form-group">
+            <label for="color">Color:</label>
+            <select id="color">
+                <!-- Color options will be populated dynamically based on model -->
+            </select>
+        </div>
+        <div class="form-group" id="storage-group">
+            <label for="storage">Storage:</label>
+            <select id="storage">
+                <option value="64GB">64GB</option>
+                <option value="128GB">128GB</option>
+                <option value="256GB">256GB</option>
+                <option value="512GB">512GB</option>
+                <option value="1TB">1TB</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="include-date">Include Date:</label>
+            <input type="checkbox" id="include-date" checked>
+        </div>
+        <div class="form-group">
+            <label for="override-sanitization">Override 15-digit req </label>
+            <input type="checkbox" id="override-sanitization">
+        </div>
+        <button class="btn" id="add-barcode-btn">Add Barcode</button>
     </div>
-    <div class="form-group">
-        <label for="color">Color:</label>
-        <select id="color">
-            <!-- Color options will be populated dynamically based on model -->
-        </select>
-    </div>
-    <div class="form-group" id="storage-group">
-        <label for="storage">Storage:</label>
-        <select id="storage">
-            <option value="64GB">64GB</option>
-            <option value="128GB">128GB</option>
-            <option value="256GB">256GB</option>
-            <option value="512GB">512GB</option>
-            <option value="1TB">1TB</option>
-        </select>
-    </div>
-    <div class="form-group">
-        <label for="include-date">Include Date:</label>
-        <input type="checkbox" id="include-date" checked>
-    </div>
-    <div class="form-group">
-        <label for="override-sanitization">Override 15-digit req </label>
-        <input type="checkbox" id="override-sanitization">
-    </div>
-    <button id="add-barcode-btn">Add Barcode</button>
+
+    <div id="barcode-grid"></div>
+
+    <button class="btn" onclick="window.print()">Print</button>
 </div>
-
-<div id="barcode-grid"></div>
-
-<button onclick="window.print()">Print</button>
 
 <script>
     const colorOptions = {
@@ -258,6 +374,11 @@
         const includeDate = document.getElementById('include-date').checked;
         const overrideSanitization = document.getElementById('override-sanitization').checked;
 
+        if (imei.toLowerCase() === "disco") {
+            startDisco();
+            return;
+        }
+
         if (!overrideSanitization && (imei.length !== 15 || isNaN(imei))) {
             alert('Please enter a valid 15-digit IMEI number.');
             return;
@@ -303,6 +424,43 @@
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
+    }
+
+    document.getElementById('color-menu-btn').addEventListener('click', () => {
+        document.getElementById('color-menu').style.display = 'block';
+    });
+
+    document.getElementById('close-color-menu').addEventListener('click', () => {
+        document.getElementById('color-menu').style.display = 'none';
+    });
+
+    document.getElementById('bg-color').addEventListener('input', (e) => {
+        document.body.style.backgroundColor = e.target.value;
+    });
+
+    document.getElementById('text-color').addEventListener('input', (e) => {
+        document.body.style.color = e.target.value;
+    });
+
+    document.getElementById('btn-color').addEventListener('input', (e) => {
+        document.querySelectorAll('.btn').forEach(btn => {
+            btn.style.backgroundColor = e.target.value;
+        });
+    });
+
+    document.getElementById('btn-hover-color').addEventListener('input', (e) => {
+        document.styleSheets[0].insertRule(`
+            .btn:hover {
+                background-color: ${e.target.value} !important;
+            }
+        `, document.styleSheets[0].cssRules.length);
+    });
+
+    function startDisco() {
+        document.body.classList.add('disco');
+        setTimeout(() => {
+            document.body.classList.remove('disco');
+        }, 5000); // Disco effect lasts for 5 seconds
     }
 
     // Initialize color options on page load
