@@ -157,12 +157,10 @@
             <label for="custom-model">Custom Model:</label>
             <input type="text" id="custom-model">
         </div>
-        <div class="form-group">
-            <label for="color">Color:</label>
-            <select id="color">
-                <!-- Color options will be populated dynamically based on model -->
-            </select>
-        </div>
+        <div class="form-group" id="color-group" style="display: none;">
+    <label for="color">Color:</label>
+    <select id="color"></select>
+</div>
         <div class="form-group" id="storage-group">
             <label for="storage">Storage:</label>
             <select id="storage">
@@ -235,39 +233,44 @@
 
     document.getElementById('model').addEventListener('change', updateColors);
 
-    function updateColors() {
-        const model = document.getElementById('model').value;
-        const colorSelect = document.getElementById('color');
-        const storageGroup = document.getElementById('storage-group');
-        const customModelGroup = document.getElementById('custom-model-group');
+function updateColors() {
+    const model = document.getElementById('model').value;
+    const colorSelect = document.getElementById('color');
+    const colorGroup = document.getElementById('color-group');
+    const storageGroup = document.getElementById('storage-group');
+    const customModelGroup = document.getElementById('custom-model-group');
 
-        // Show custom model input if "Custom" is selected
-        if (model === "Custom") {
-            customModelGroup.style.display = 'block';
-        } else {
-            customModelGroup.style.display = 'none';
-        }
-
-        // Hide storage option for watches
-        if (watchModels.includes(model)) {
-            storageGroup.style.display = 'none';
-        } else {
-            storageGroup.style.display = 'block';
-        }
-
-        // Clear existing options
-        colorSelect.innerHTML = '';
-
-        // Populate new options
-        if (colorOptions[model]) {
-            colorOptions[model].forEach(color => {
-                const option = document.createElement('option');
-                option.value = color;
-                option.textContent = color;
-                colorSelect.appendChild(option);
-            });
-        }
+    // Show custom model input if "Custom" is selected
+    if (model === "Custom") {
+        customModelGroup.style.display = 'block';
+        colorGroup.style.display = 'none'; // Hide color menu for custom models
+    } else {
+        customModelGroup.style.display = 'none';
     }
+
+    // Hide storage option for watches
+    if (watchModels.includes(model)) {
+        storageGroup.style.display = 'none';
+    } else {
+        storageGroup.style.display = 'block';
+    }
+
+    // Clear existing options
+    colorSelect.innerHTML = '';
+
+    // Populate new options
+    if (colorOptions[model]) {
+        colorOptions[model].forEach(color => {
+            const option = document.createElement('option');
+            option.value = color;
+            option.textContent = color;
+            colorSelect.appendChild(option);
+        });
+        colorGroup.style.display = 'block'; // Show the color menu if valid colors exist
+    } else {
+        colorGroup.style.display = 'none'; // Hide the color menu if no colors are available
+    }
+}
 
     document.getElementById('add-barcode-btn').addEventListener('click', addBarcode);
 
