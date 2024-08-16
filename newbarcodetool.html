@@ -157,10 +157,11 @@
             <label for="custom-model">Custom Model:</label>
             <input type="text" id="custom-model">
         </div>
-        <div class="form-group" id="color-group" style="display: none;">
+      <div class="form-group" id="color-group" style="display: none;">
     <label for="color">Color:</label>
     <select id="color"></select>
 </div>
+
         <div class="form-group" id="storage-group">
             <label for="storage">Storage:</label>
             <select id="storage">
@@ -230,17 +231,16 @@
         "Apple Watch Series 9 41mm",
         "Apple Watch Series 9 45mm"
     ];
-
-    document.getElementById('model').addEventListener('change', updateColors);
+document.getElementById('model').addEventListener('change', updateColors);
 
 function updateColors() {
     const model = document.getElementById('model').value;
     const colorSelect = document.getElementById('color');
-    const colorGroup = document.getElementById('color-group');
+    const colorGroup = document.getElementById('color-group'); // Reference to the color group
     const storageGroup = document.getElementById('storage-group');
     const customModelGroup = document.getElementById('custom-model-group');
 
-    // Show custom model input if "Custom" is selected
+    // Show or hide custom model input
     if (model === "Custom") {
         customModelGroup.style.display = 'block';
         colorGroup.style.display = 'none'; // Hide color menu for custom models
@@ -248,17 +248,17 @@ function updateColors() {
         customModelGroup.style.display = 'none';
     }
 
-    // Hide storage option for watches
+    // Show or hide storage option based on whether the model is a watch
     if (watchModels.includes(model)) {
         storageGroup.style.display = 'none';
     } else {
         storageGroup.style.display = 'block';
     }
 
-    // Clear existing options
+    // Clear existing color options
     colorSelect.innerHTML = '';
 
-    // Populate new options
+    // Populate new color options if the model has any
     if (colorOptions[model]) {
         colorOptions[model].forEach(color => {
             const option = document.createElement('option');
