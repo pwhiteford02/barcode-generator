@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Barcode Generator</title>
- <style>
+<style>
     body {
         font-family: Arial, sans-serif;
         margin: 20px;
@@ -40,7 +40,7 @@
         height: auto;
     }
     .barcode-item div {
-        font-size: 5px; /* Reduced font size */
+        font-size: 7px; /* Original font size maintained */
         margin-top: 2px;
     }
     .delete-btn {
@@ -77,7 +77,7 @@
         .barcode-item {
             page-break-inside: avoid;
             break-inside: avoid;
-            width: calc(16.66% - 5px); /* Adjusted for printing */
+            width: calc(16.66% - 10px); /* Maintain 6 per row in print */
             margin: 5px;
         }
         .delete-btn {
@@ -85,6 +85,7 @@
         }
     }
 </style>
+
 </head>
 <body>
 
