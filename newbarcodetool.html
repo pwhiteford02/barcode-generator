@@ -4,182 +4,87 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Barcode Generator</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #e9ecef;
-            color: #343a40;
-        }
-        .container {
-            padding: 20px;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-        #controls {
-            background: #ffffff;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            margin-bottom: 20px;
-        }
-        .form-group {
-            display: flex;
-            flex-direction: column;
-            margin-bottom: 15px;
-        }
-        .form-group label {
-            margin-bottom: 5px;
-            font-weight: bold;
-        }
-        .form-group input,
-        .form-group select {
-            padding: 10px;
-            border: 1px solid #ced4da;
-            border-radius: 4px;
-            font-size: 16px;
-            color: #495057;
-        }
-        .form-group input[type="checkbox"] {
-            width: auto;
-        }
-        .btn {
-            background-color: #007bff;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 16px;
-        }
-        .btn:hover {
-            background-color: #0056b3;
-        }
-        #barcode-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            gap: 20px;
+ <style>
+    body {
+        font-family: Arial, sans-serif;
+        margin: 20px;
+        background-color: #f5f5f5;
+        color: #333;
+    }
+    .form-group {
+        margin-bottom: 15px;
+    }
+    #controls {
+        background: #fff;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        margin-bottom: 20px;
+    }
+    #barcode-grid {
+        display: flex;
+        flex-wrap: wrap;
+    }
+    .barcode-item {
+        padding: 5px;
+        margin: 5px;
+        text-align: center;
+        background: #fff;
+        border-radius: 8px;
+        width: calc(16.66% - 10px); /* Adjusted to fit 6 per row */
+        box-sizing: border-box;
+        position: relative;
+    }
+    .barcode-item img {
+        width: 100%;
+        height: auto;
+    }
+    .barcode-item div {
+        font-size: 5px; /* Reduced font size */
+        margin-top: 2px;
+    }
+    .delete-btn {
+        position: absolute;
+        top: 5px;
+        right: 5px;
+        background: red;
+        color: white;
+        border: none;
+        border-radius: 50%;
+        width: 20px;
+        height: 20px;
+        cursor: pointer;
+        font-size: 12px;
+        line-height: 20px;
+        text-align: center;
+    }
+    button {
+        background-color: #007bff;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 16px;
+    }
+    button:hover {
+        background-color: #0056b3;
+    }
+    @media print {
+        #controls, #add-barcode-btn {
+            display: none;
         }
         .barcode-item {
-            background: #ffffff;
-            padding: 10px;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            text-align: center;
-            position: relative;
-        }
-        .barcode-item img {
-            width: 100%;
-            height: auto;
-        }
-        .barcode-item div {
-            font-size: 12px;
-            margin-top: 10px;
-        }
-        .delete-btn,
-        .download-btn {
-            position: absolute;
-            top: 10px;
-            border: none;
-            border-radius: 50%;
-            width: 25px;
-            height: 25px;
-            cursor: pointer;
-            font-size: 14px;
-            line-height: 25px;
-            text-align: center;
-            color: white;
+            page-break-inside: avoid;
+            break-inside: avoid;
+            width: calc(16.66% - 5px); /* Adjusted for printing */
+            margin: 5px;
         }
         .delete-btn {
-            right: 40px;
-            background: #dc3545;
-        }
-        .download-btn {
-            right: 10px;
-            background: #28a745;
-        }
-        #color-menu-btn {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 30px;
-            height: 30px;
-            background: transparent;
-            border: none;
-            cursor: pointer;
             display: none;
         }
-        #color-menu {
-            display: none;
-            background: #fff;
-            position: fixed;
-            top: 50px;
-            left: 50px;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            z-index: 1000;
-        }
-        .color-slider {
-            margin: 10px 0;
-        }
-        .color-slider label {
-            display: block;
-            margin-bottom: 5px;
-        }
-        .color-slider input {
-            width: 100%;
-        }
-        @media (max-width: 768px) {
-            .form-group {
-                flex-direction: column;
-            }
-            .barcode-item {
-                grid-column: span 2;
-            }
-        }
-        @media (max-width: 480px) {
-            .barcode-item {
-                grid-column: span 1;
-            }
-        }
-        @media print {
-            #controls, #add-barcode-btn, #color-menu-btn {
-                display: none;
-            }
-            .barcode-item {
-                page-break-inside: avoid;
-                break-inside: avoid;
-                margin-bottom: 10px;
-            }
-            .delete-btn, .download-btn {
-                display: none;
-            }
-        }
-        #hover-area {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 50px;
-            height: 50px;
-            background: transparent;
-        }
-        #hover-area:hover #color-menu-btn {
-            display: block;
-        }
-        @keyframes disco {
-            0% { background-color: #ff0000; }
-            20% { background-color: #ff7f00; }
-            40% { background-color: #ffff00; }
-            60% { background-color: #00ff00; }
-            80% { background-color: #0000ff; }
-            100% { background-color: #8b00ff; }
-        }
-        .disco {
-            animation: disco 0.5s infinite;
-        }
-    </style>
+    }
+</style>
 </head>
 <body>
 
